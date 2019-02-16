@@ -148,7 +148,6 @@ String post="oszlop="+String(set.sensor_count)+"&ma="+set.ArduinoName+"&pin="+se
         post+="&logb"+String(i+1)+"="+set.header[i];
         post+="&sensor"+String(i+1)+"="+set.sensors[i];
         }
-Serial.println(post);
 int httpCode=http.POST(post);
 #endif
 
