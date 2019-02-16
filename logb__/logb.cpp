@@ -5,42 +5,33 @@
 HTTPClient http; 
 #endif
 
-void connectToDB(){
-#if defined(ESP8266)
-http.begin("http://cloud.logb.hu/cloud/upload.php");             
-http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-#endif
-}
-
-String TableName(int tz){
+time_t UnixTime(int tz){
   #if defined(ESP8266)
+  time_t now=0;
   String date="";
   int timezone = tz * 3600;
   int dst = 0;
+  while(now<958881900){
   configTime(timezone, dst, "pool.ntp.org","time.nist.gov");
   while(!time(nullptr)){
     delay(2000);
-  }delay(4000);
-date = time(nullptr);
-return date;
+  }delay(10);
+now = time(nullptr);
+  }
+return now;
 #endif
 }
 
-String onlineDate(int tz){
-  #if defined(ESP8266)
-  String date="";
-  int timezone = tz * 3600;
-  int dst = 0;
+void CreateName(time_t time){
+  set.ArduinoName=set.device_id+"_"+String(time);
+  Time(time);
+}
+
+void Time(time_t time){
+  struct tm* p_tm = localtime(&time);
+ String date="";
   String d;
   String n="0";
-  configTime(timezone, dst, "pool.ntp.org","time.nist.gov");
-
-  while(!time(nullptr)){
-    delay(1000);
-  } 
-time_t now = time(nullptr);
-  struct tm* p_tm = localtime(&now);
- 
   date+=p_tm->tm_year + 1900;  
   date+="-";
   d=p_tm->tm_mon + 1;
@@ -82,8 +73,7 @@ time_t now = time(nullptr);
    }else{
     date+=d;
    }
-return date;
- #endif
+set.date= date;
 }
 
 /*
@@ -147,13 +137,33 @@ void dateTime(uint16_t* date, uint16_t* time) {
 }
 */
 
-void out(String data){
-  set.store[set.now]=data;
-   if(set.now==set.db){
+void Send(){
+  String fulldata;
+  if(set.DB==false){
+#if defined(ESP8266)
+http.begin("http://cloud.logb.hu/cloud/upload.php");             
+http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+String post="oszlop="+String(set.sensor_count)+"&ma="+set.ArduinoName+"&pin="+set.pin+"&device="+set.device_id+"&time="+set.date;
+        for(int i=0;i<set.sensor_count;i++){
+        post+="&logb"+String(i+1)+"="+set.header[i];
+        post+="&sensor"+String(i+1)+"="+set.sensors[i];
+        }
+Serial.println(post);
+int httpCode=http.POST(post);
+#endif
+
+for(int i=0;i<set.sensor_count;i++){
+  set.store[i]=set.header[i];
+}
+set.DB=true;
+fulldata="Date";
+  }else{
+    fulldata=set.date;
+  }
     for (int j = 0; j < set.where.length(); j++){
     char w = set.where.charAt(j);
-    String fulldata="";
-     for(int i=1;i<=set.db;i++){
+    fulldata+=set.semicolon;
+     for(int i=0;i<set.sensor_count;i++){
       String d=set.store[i];
         if(set.toComma){
          
@@ -174,19 +184,30 @@ void out(String data){
           Sd.println(fulldata);
         }
         Sd.close();
-    }if(w=='c'){
+    }if(w=='c' and set.DB){
         #if defined(ESP8266)
-         String post="oszlop="+String(set.db)+"&date="+set.date+"&pin="+set.pin+"&device="+set.device+"&time="+String(onlineDate(1));
-        for(int i=1;i<=set.db;i++){
-        post+="&logb"+String(i)+"="+set.store[i];
+         String post="oszlop="+String(set.sensor_count)+"&ma="+set.ArduinoName+"&pin="+set.pin+"&device="+set.device_id+"&time="+set.date;
+        for(int i=0;i<set.sensor_count;i++){
+        post+="&logb"+String(i+1)+"="+set.store[i];
       }
         int httpCode=http.POST(post);
          #endif
     }
  
-    }set.now=0;
-  }set.now++;
+    }
 }
+void AddNewSensorData(String id, String data){
+  int sensorID=-1;
+  for (int i=0;i<set.sensor_count ;i++){
+    if(set.sensors[i]==id){
+      sensorID=i;
+    }
+  }
+  if(sensorID>-1){
+   set.store[sensorID]=data;
+  }
+}
+
 String DIPconfig(){
   String b="";
   pinMode(3,INPUT_PULLUP);
@@ -224,4 +245,11 @@ long int interval(String b){
   }
   timeinterval*=1000;
   return timeinterval;
+}
+
+void AddNewHeaderParam(String id, String header){
+  set.sensors[set.sensor_count]=id;
+  set.header[set.sensor_count]=header;
+  set.sensor_count++;
+  //set.now++;
 }
