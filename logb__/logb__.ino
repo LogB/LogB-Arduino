@@ -11,7 +11,7 @@ delay(5000);
 set.device_id="cimbi21_1";
 set.pin="admin";
 set.where="ac";
-set.timeInterval=600000;
+set.timeInterval=40000;
 CreateName(UnixTime(1));
 AddNewHeaderParam("SHT21-I2C-3V3-TEMP-C", "Temperature");
 AddNewHeaderParam("SHT21-I2C-3V3-HUM-%", "Humidity");
