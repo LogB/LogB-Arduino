@@ -14,8 +14,8 @@ time_t UnixTime(int tz){
   while(now<958881900){
   configTime(timezone, dst, "pool.ntp.org","time.nist.gov");
   while(!time(nullptr)){
-    delay(2000);
-  }delay(10);
+    delay(200);
+  }delay(100);
 now = time(nullptr);
   }
 return now;
@@ -28,7 +28,7 @@ void CreateName(time_t time){
 }
 
 void Time(time_t time){
-  struct tm* p_tm = localtime(&time);
+ struct tm* p_tm = localtime(&time);
  String date="";
   String d;
   String n="0";
@@ -141,7 +141,7 @@ void Send(){
   String fulldata;
   if(set.DB==false){
 #if defined(ESP8266)
-http.begin("http://cloud.logb.hu/cloud/upload.php");             
+http.begin("http://cloud.logb.hu/cloud/upload.php");
 http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 String post="oszlop="+String(set.sensor_count)+"&ma="+set.ArduinoName+"&pin="+set.pin+"&device="+set.device_id+"&time="+set.date;
         for(int i=0;i<set.sensor_count;i++){
