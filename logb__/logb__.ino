@@ -8,13 +8,13 @@ void setup() {
 Serial.begin(115200); 
 Wire.begin();
 lightMeter.begin();
-//WiFi.begin("LogB Cloud", "logb2018");
-WiFi.begin("Potyka", "62Botticelli2016");
+WiFi.begin("LogB Cloud", "logb2018");
+//WiFi.begin("Potyka", "62Botticelli2016");
 delay(5000);
 set.device_id="cimbi21_1";
 set.pin="admin";
 set.where="ac";
-set.timeInterval=4000;
+set.timeInterval=5000;
 CreateName(UnixTime(1));
 AddNewHeaderParam("SHT21-I2C-3V3-TEMP-C", "Temperature");
 AddNewHeaderParam("SHT21-I2C-3V3-HUM-%", "Humidity");
