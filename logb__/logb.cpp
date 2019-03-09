@@ -64,18 +64,18 @@ else{
   }
     for (int j = 0; j < set.where.length(); j++){
       char w = set.where.charAt(j);
-      fulldata+=set.semicolon;
+      fulldata+=set.seperate;
       for(int i=0;i<set.sensor_count;i++){
         String d=set.store[i];
           if(set.toComma){
             d.replace('.',',');
            }   
           fulldata+=d;
-          fulldata+=set.semicolon;
+          fulldata+=set.seperate;
       }
       
-   if (w=='a'){
-   Serial.println(fulldata);
+  if (w=='a'){
+  Serial.println(fulldata);
     }
 
   if (w=='b'){
@@ -131,5 +131,4 @@ void AddNewHeaderParam(String id, String header){
   set.sensors[set.sensor_count]=id;
   set.header[set.sensor_count]=header;
   set.sensor_count++;
-  //set.now++;
 }
