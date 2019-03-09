@@ -29,9 +29,9 @@ void CreateName(time_t time){
 
 void Time(time_t time){
  struct tm* p_tm = localtime(&time);
- String date="";
-  String d;
-  String n="0";
+ char number="0123456789"
+ String date;
+ String d;
   date+=p_tm->tm_year + 1900;  
   date+="-";
   d=p_tm->tm_mon + 1;
@@ -149,6 +149,7 @@ String post="oszlop="+String(set.sensor_count)+"&ma="+set.ArduinoName+"&pin="+se
         post+="&sensor"+String(i+1)+"="+set.sensors[i];
         }
 int httpCode=http.POST(post);
+//Serial.println(httpCode);
 #endif
 
 for(int i=0;i<set.sensor_count;i++){
@@ -190,6 +191,7 @@ fulldata="Date";
         post+="&logb"+String(i+1)+"="+set.store[i];
       }
         int httpCode=http.POST(post);
+        //Serial.println(httpCode);
          #endif
     }
  
