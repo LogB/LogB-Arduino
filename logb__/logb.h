@@ -15,7 +15,7 @@
 
 struct Settings{
   String file=""; 
-  String semicolon=";";
+  String seperate=";";
   bool toComma=true; 
   String where="";
   String pin="";
