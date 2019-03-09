@@ -14,8 +14,7 @@ time_t UnixTime(int tz){
   while(now<958881900){
   configTime(timezone, dst, "pool.ntp.org","time.nist.gov");
   while(!time(nullptr)){
-    delay(200);
-  }delay(100);
+  }delay(10);
 now = time(nullptr);
   }
 return now;
@@ -63,6 +62,7 @@ String post="oszlop="+String(set.sensor_count)+"&ma="+set.ArduinoName+"&pin="+se
         post+="&sensor"+String(i+1)+"="+set.sensors[i];
         }
 int httpCode=http.POST(post);
+http.end();
 //Serial.println(httpCode);
 #endif
 
@@ -99,11 +99,14 @@ fulldata="Date";
         Sd.close();
     }if(w=='c' and set.DB){
         #if defined(ESP8266)
+        http.begin("http://cloud.logb.hu/cloud/upload.php");
+        http.addHeader("Content-Type", "application/x-www-form-urlencoded");
          String post="oszlop="+String(set.sensor_count)+"&ma="+set.ArduinoName+"&pin="+set.pin+"&device="+set.device_id+"&time="+set.date;
         for(int i=0;i<set.sensor_count;i++){
         post+="&logb"+String(i+1)+"="+set.store[i];
       }
         int httpCode=http.POST(post);
+        http.end();
         //Serial.println(httpCode);
          #endif
     }
