@@ -10,7 +10,6 @@ Wire.begin();
 lightMeter.begin();
 //WiFi.begin("LogB Cloud", "logb2018");
 WiFi.begin("Potyka", "62Botticelli2016");
-//delay(5000);//ki kell venni
 set.device_id="cimbi21_1";
 set.pin="admin";
 set.where="ac";
