@@ -4,8 +4,11 @@
 #if defined(ESP8266)
 HTTPClient http; 
 #endif
-
-time_t UnixTime(int tz){
+SdFat SDcard;
+void SD(){
+  SDcard.begin(SS);
+}
+DateTime UnixTime(int tz){
   #if defined(ESP8266)
   time_t now=0;
   String date="";
@@ -21,8 +24,9 @@ return now;
 #endif
 }
 
-void CreateName(time_t time){
-  set.ArduinoName=set.device_id+"_"+String(time);
+void CreateName(DateTime time){
+  set.ArduinoName=set.device_id+"_"+String(time.unixtime());
+  set.file=set.ArduinoName+".txt";
   Time(time);
 }
 String wz(int n){
@@ -33,20 +37,19 @@ String wz(int n){
     r=n;
   }return r;
 }
-void Time(time_t time){
- struct tm* p_tm = localtime(&time);
+void Time(DateTime time){
  String date;
-  date+=p_tm->tm_year + 1900;  
+  date+=time.year();  
   date+="-";
-  date+=wz(p_tm->tm_mon + 1);
+  date+=wz(time.month());
   date+="-";
-  date+=wz(p_tm->tm_mday);
+  date+=wz(time.day());
   date+=" ";
-  date+=wz(p_tm->tm_hour);
+  date+=wz(time.hour());
   date+=":";
-  date+=wz(p_tm->tm_min);
+  date+=wz(time.minute());
   date+=":";
-  date+=wz(p_tm->tm_sec);
+  date+=wz(time.second());
 set.date= date;
 }
 
@@ -79,8 +82,11 @@ else{
     }
 
   if (w=='b'){
-      SdFat SD;
-      File Sd = SD.open(set.file, FILE_WRITE);
+      //SdFat SD;
+        if (!SDcard.begin(SS)) {
+    Serial.println("initialization failed!");
+  }
+      File Sd = SDcard.open(set.file, FILE_WRITE);
         if(Sd){
           Sd.println(fulldata);
         }
@@ -90,7 +96,7 @@ else{
   if(w=='c'){
        #if defined(ESP8266)
         String post;
-        http.begin("http://cloud.logb.hu/cloud/upload.php");
+        http.begin("http://api.logb.hu/v1/upload.php");
         http.addHeader("Content-Type", "application/x-www-form-urlencoded");
         if(set.DB){
           post="oszlop="+String(set.sensor_count)+"&ma="+set.ArduinoName+"&pin="+set.pin+"&device="+set.device_id+"&time="+set.date;
