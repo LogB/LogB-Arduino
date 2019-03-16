@@ -24,7 +24,7 @@ return now;
 
 void CreateName(DateTime time){
   set.ArduinoName=set.device_id+"_"+String(time.unixtime());
-  Time(time);
+  set.date=time;
 }
 String wz(int n){
   String r="0";
@@ -34,7 +34,7 @@ String wz(int n){
     r=n;
   }return r;
 }
-void Time(DateTime time){
+String Time(DateTime time){
  String date;
   date+=time.year();  
   date+="-";
@@ -47,7 +47,13 @@ void Time(DateTime time){
   date+=wz(time.minute());
   date+=":";
   date+=wz(time.second());
-set.date= date;
+return date;
+}
+
+void dateTime(uint16_t* date, uint16_t* time) {
+  DateTime now = set.date;
+  *date = FAT_DATE(now.year(), now.month(), now.day());
+  *time = FAT_TIME(now.hour(), now.minute(), now.second());
 }
 
 void Send(){
@@ -57,7 +63,7 @@ if(set.DB==false){
 fulldata="Date";
 }
 else{
-    fulldata=set.date;
+    fulldata=Time(set.date);
   }
     for (int j = 0; j < set.where.length(); j++){
       char w = set.where.charAt(j);
@@ -76,8 +82,7 @@ else{
     }
 
   if (w=='b'){
-      //SdFat SD;
-      //SdFat SDcard;
+  SdFile::dateTimeCallback(dateTime);
       if(set.DB==false){
       SD.begin(SS);
       }
@@ -95,13 +100,13 @@ else{
         http.begin("http://api.logb.hu/v1/upload.php");
         http.addHeader("Content-Type", "application/x-www-form-urlencoded");
         if(set.DB){
-          post="oszlop="+String(set.sensor_count)+"&ma="+set.ArduinoName+"&pin="+set.pin+"&device="+set.device_id+"&time="+set.date;
+          post="oszlop="+String(set.sensor_count)+"&ma="+set.ArduinoName+"&pin="+set.pin+"&device="+set.device_id+"&time="+Time(set.date);
           for(int i=0;i<set.sensor_count;i++){
             post+="&logb"+String(i+1)+"="+set.store[i];
           }
         }
           else{
-          post="oszlop="+String(set.sensor_count)+"&ma="+set.ArduinoName+"&pin="+set.pin+"&device="+set.device_id+"&time="+set.date;
+          post="oszlop="+String(set.sensor_count)+"&ma="+set.ArduinoName+"&pin="+set.pin+"&device="+set.device_id+"&time="+Time(set.date);
           for(int i=0;i<set.sensor_count;i++){
             post+="&logb"+String(i+1)+"="+set.header[i];
             post+="&sensor"+String(i+1)+"="+set.sensors[i];
