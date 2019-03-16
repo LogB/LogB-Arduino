@@ -13,13 +13,12 @@
 #include "Sodaq_SHT2x.h"
 
 #include <time.h>
-#include <SPI.h>
-#include <Arduino.h>
+//#include <SPI.h>
+//#include <Arduino.h>
 #include <Wire.h>
 #include <SdFat.h>
 
 struct Settings{
-  String file=""; 
   String seperate=";";
   bool toComma=false; 
   String where="";
@@ -27,20 +26,17 @@ struct Settings{
   String measurement_arduinoname="";
   int sensor_count=0;
   String device_id="logb";
-  String store[25];
-  String sensors[25];
-  String header[25];
-  unsigned long previousMillis = 0;
-  unsigned long timeInterval= 1000;
-  unsigned long currentMillis=0;
+  String store[10];
+  int sensors[10];
+  //String header[10];
   bool DB=false;
   String date;
   String ArduinoName;
 };
 extern Settings set;
 void Time(DateTime time);
-void AddNewSensorData(String id, String data);
+void AddNewSensorData(int id, String data);
 void CreateName(DateTime time);
 void Send();
 DateTime UnixTime(int tz);
-void AddNewHeaderParam(String id, String header);
+void AddNewHeaderParam(int id, String header);
