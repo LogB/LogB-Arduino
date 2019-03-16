@@ -25,15 +25,6 @@ set.where="ab";
 CreateName(rtc.now());
 AddNewHeaderParam(1, "Temperature");
 AddNewHeaderParam(2, "Humidity");
-AddNewHeaderParam(3, "Humidity");
-AddNewHeaderParam(4, "Humidity");
-AddNewHeaderParam(5, "Humidity");
-AddNewHeaderParam(6, "Humidity");
-AddNewHeaderParam(7, "Humidity");
-AddNewHeaderParam(8, "Humidity");
-AddNewHeaderParam(9, "Humidity");
-AddNewHeaderParam(10, "Humidity");
-//("BH1750-I2C-3V3-LIGHT-lx", "Light");
 
 Send();
 }
@@ -42,17 +33,10 @@ void loop() {
 currentMillis = millis(); 
 if (currentMillis - previousMillis >= 2000) { 
 previousMillis = currentMillis; 
-Time(rtc.now());
+set.date=rtc.now();
 AddNewSensorData(1, String(SHT2x.GetTemperature()));
 AddNewSensorData(2, String(SHT2x.GetHumidity()));
-AddNewSensorData(3, String(SHT2x.GetTemperature()));
-AddNewSensorData(4, String(SHT2x.GetTemperature()));
-AddNewSensorData(5, String(SHT2x.GetTemperature()));
-AddNewSensorData(6, String(SHT2x.GetTemperature()));
-AddNewSensorData(7, String(SHT2x.GetTemperature()));
-AddNewSensorData(8, String(SHT2x.GetTemperature()));
-AddNewSensorData(9, String(SHT2x.GetTemperature()));
-AddNewSensorData(10, "Humidity");
+Serial.println(rtc.now().unixtime());
 //AddNewSensorData("BH1750-I2C-3V3-LIGHT-lx", String(lightMeter.readLightLevel()));
 
 Send();
