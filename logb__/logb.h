@@ -30,11 +30,11 @@ struct Settings{
   int sensors[10];
   //String header[10];
   bool DB=false;
-  String date;
+  DateTime date;
   String ArduinoName;
 };
 extern Settings set;
-void Time(DateTime time);
+String Time(DateTime time);
 void AddNewSensorData(int id, String data);
 void CreateName(DateTime time);
 void Send();
