@@ -1,13 +1,11 @@
 //logb.cpp
 #include "logb.h"
+      SdFat SD;
 
 #if defined(ESP8266)
 HTTPClient http; 
 #endif
-SdFat SDcard;
-void SD(){
-  SDcard.begin(SS);
-}
+
 DateTime UnixTime(int tz){
   #if defined(ESP8266)
   time_t now=0;
@@ -26,7 +24,6 @@ return now;
 
 void CreateName(DateTime time){
   set.ArduinoName=set.device_id+"_"+String(time.unixtime());
-  set.file=set.ArduinoName+".txt";
   Time(time);
 }
 String wz(int n){
@@ -57,9 +54,6 @@ void Send(){
 String fulldata;
 
 if(set.DB==false){
-for(int i=0;i<set.sensor_count;i++){
-  set.store[i]=set.header[i];
-}
 fulldata="Date";
 }
 else{
@@ -83,10 +77,12 @@ else{
 
   if (w=='b'){
       //SdFat SD;
-        if (!SDcard.begin(SS)) {
-    Serial.println("initialization failed!");
-  }
-      File Sd = SDcard.open(set.file, FILE_WRITE);
+      //SdFat SDcard;
+      if(set.DB==false){
+      SD.begin(SS);
+      }
+      String file=set.ArduinoName+".txt";
+      File Sd = SD.open(file, FILE_WRITE);
         if(Sd){
           Sd.println(fulldata);
         }
@@ -121,7 +117,7 @@ else{
     set.DB=true;
 }
 
-void AddNewSensorData(String id, String data){
+void AddNewSensorData(int id, String data){
   int sensorID=-1;
   for (int i=0;i<set.sensor_count ;i++){
     if(set.sensors[i]==id){
@@ -133,8 +129,8 @@ void AddNewSensorData(String id, String data){
   }
 }
 
-void AddNewHeaderParam(String id, String header){
+void AddNewHeaderParam(int id, String header){
   set.sensors[set.sensor_count]=id;
-  set.header[set.sensor_count]=header;
+  set.store[set.sensor_count]=header;
   set.sensor_count++;
 }
