@@ -1,6 +1,6 @@
 //logb.cpp
 #include "logb.h"
-      SdFat SD;
+SdFat SD;
 
 #if defined(ESP8266)
 HTTPClient http; 
@@ -122,7 +122,7 @@ else{
     set.DB=true;
 }
 
-void AddNewSensorData(int id, String data){
+void AddNewSensorData(String id, String data){
   int sensorID=-1;
   for (int i=0;i<set.sensor_count ;i++){
     if(set.sensors[i]==id){
