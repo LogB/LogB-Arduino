@@ -1,22 +1,13 @@
 //logb.h
 
 #if defined(ESP8266)
-
-#include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
+#include "ESP8266/ESP8266WiFi.h"
+#include "ESP8266/ESP8266HTTPClient.h"
 #endif
 
-#include "Adafruit_SI1145.h"
-#include "Adafruit_BMP085.h"
 #include "RTClib.h"
-#include "BH1750.h"
-#include "Sodaq_SHT2x.h"
-
-#include <time.h>
-//#include <SPI.h>
-//#include <Arduino.h>
 #include <Wire.h>
-#include <SdFat.h>
+#include "SdFat/SdFat.h"
 
 struct Settings{
   String seperate=";";
@@ -27,15 +18,16 @@ struct Settings{
   int sensor_count=0;
   String device_id="logb";
   String store[10];
-  int sensors[10];
-  //String header[10];
+  String sensors[10];
   bool DB=false;
   DateTime date;
   String ArduinoName;
+  unsigned long previousMillis = 0;
+  unsigned long currentMillis=0;
 };
 extern Settings set;
 String Time(DateTime time);
-void AddNewSensorData(int id, String data);
+void AddNewSensorData(String id, String data);
 void CreateName(DateTime time);
 void Send();
 DateTime UnixTime(int tz);
