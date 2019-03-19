@@ -16,25 +16,29 @@ set.device_id="cimbi21_1";
 set.pin="admin";
 set.where="ab";
 CreateName(rtc.now());
-AddNewHeaderParam(1, "Temperature");
-AddNewHeaderParam(2, "Humidity");
-Send();
 }
 void loop() {
 set.currentMillis = millis(); 
 if (set.currentMillis - set.previousMillis >= 2000) { 
 set.previousMillis = set.currentMillis; 
 set.date=rtc.now();
-AddNewSensorData("Temperature",   String(SHT2x.GetTemperature()));
-AddNewSensorData("2Temperature",  String(SHT2x.GetHumidity()));
-AddNewSensorData("2Temperature",  String(SHT2x.GetHumidity()));
-AddNewSensorData("2Tsemperature", String(SHT2x.GetHumidity()));
-AddNewSensorData("2Tesmperature", String(SHT2x.GetHumidity()));
-AddNewSensorData("2Temsperature", String(SHT2x.GetHumidity()));
-AddNewSensorData("2Tempearature", String(SHT2x.GetHumidity()));
-AddNewSensorData("2Temperaature", String(SHT2x.GetHumidity()));
-AddNewSensorData("2Tempercature", String(SHT2x.GetHumidity()));
-AddNewSensorData("2Temperaíture", String(SHT2x.GetHumidity()));
+AddData("Date",   Time(rtc.now()));
+AddData("Temp",  String(SHT2x.GetHumidity()));
+AddData("Hum",   String(SHT2x.GetTemperature()));
+AddData("Temp",  String(SHT2x.GetHumidity()));
+AddData("Hum",   String(SHT2x.GetTemperature()));
+AddData("Temp",  String(SHT2x.GetHumidity()));
+AddData("Hum",   String(SHT2x.GetTemperature()));
+AddData("Temp",  String(SHT2x.GetHumidity()));
+AddData("Hum",   String(SHT2x.GetTemperature()));
+AddData("Temp",  String(SHT2x.GetHumidity()));
+AddData("Hum",   String(SHT2x.GetTemperature()));
+AddData("Temp",  String(SHT2x.GetHumidity()));
+AddData("Hum",   String(SHT2x.GetTemperature()));
+AddData("Temp",  String(SHT2x.GetHumidity()));
+AddData("Hum",   String(SHT2x.GetTemperature()));
+AddData("Temp",  String(SHT2x.GetHumidity()));
+AddData("Hum",   String(SHT2x.GetTemperature()));
 Send();
 }
 }
