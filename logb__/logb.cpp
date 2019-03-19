@@ -24,8 +24,8 @@ return now;
 
 void CreateName(DateTime time){
   set.ArduinoName=set.device_id+"_"+String(time.unixtime());
-  set.date=time;
 }
+
 String wz(int n){
   String r="0";
   if(n<10){
@@ -35,6 +35,7 @@ String wz(int n){
   }return r;
 }
 String Time(DateTime time){
+  set.date=time;
  String date;
   date+=time.year();  
   date+="-";
@@ -57,85 +58,56 @@ void dateTime(uint16_t* date, uint16_t* time) {
 }
 
 void Send(){
-String fulldata;
-
-if(set.DB==false){
-fulldata="Date";
-}
-else{
-    fulldata=Time(set.date);
-  }
+  if(set.toComma){
+  set.fulldata.replace('.',',');
+   } 
     for (int j = 0; j < set.where.length(); j++){
       char w = set.where.charAt(j);
-      fulldata+=set.seperate;
-      for(int i=0;i<set.sensor_count;i++){
-        String d=set.store[i];
-          if(set.toComma){
-            d.replace('.',',');
-           }   
-          fulldata+=d;
-          fulldata+=set.seperate;
+       
+      if (w=='a'){
+      Serial.println(set.fulldata);
       }
-      
-  if (w=='a'){
-  Serial.println(fulldata);
-    }
 
-  if (w=='b'){
-  SdFile::dateTimeCallback(dateTime);
-      if(set.DB==false){
-      SD.begin(SS);
-      }
-      String file=set.ArduinoName+".txt";
-      File Sd = SD.open(file, FILE_WRITE);
-        if(Sd){
-          Sd.println(fulldata);
-        }
-        Sd.close();
-    }
-    
-  if(w=='c'){
-       #if defined(ESP8266)
-        String post;
-        http.begin("http://api.logb.hu/v1/upload.php");
-        http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-        if(set.DB){
-          post="oszlop="+String(set.sensor_count)+"&ma="+set.ArduinoName+"&pin="+set.pin+"&device="+set.device_id+"&time="+Time(set.date);
-          for(int i=0;i<set.sensor_count;i++){
-            post+="&logb"+String(i+1)+"="+set.store[i];
+      if (w=='b'){
+      SdFile::dateTimeCallback(dateTime);
+          if(set.DB==false){
+          SD.begin(SS);
           }
+          String file=set.ArduinoName+".txt";
+          File Sd = SD.open(file, FILE_WRITE);
+            if(Sd){
+              Sd.println(set.fulldata);
+            }
+            Sd.close();
         }
-          else{
-          post="oszlop="+String(set.sensor_count)+"&ma="+set.ArduinoName+"&pin="+set.pin+"&device="+set.device_id+"&time="+Time(set.date);
-          for(int i=0;i<set.sensor_count;i++){
-            post+="&logb"+String(i+1)+"="+set.header[i];
-            post+="&sensor"+String(i+1)+"="+set.sensors[i];
-          }
+        
+      if(w=='c'){
+           #if defined(ESP8266)
+            http.begin("http://api.logb.hu/v1/upload.php");
+            http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+            set.cloud+="oszlop="+String(set.sensor_count)+"&ma="+set.ArduinoName+"&pin="+set.pin+"&device="+set.device_id+"&time="+Time(set.date);
+            int httpCode=http.POST(post);
+            http.end();
+            //Serial.println(httpCode);
+           #endif
         }
-        int httpCode=http.POST(post);
-        http.end();
-        //Serial.println(httpCode);
-       #endif
-    }
  
     }
     set.DB=true;
+    set.sensor_count=0;
+    set.cloud="";
+    set.fulldata="";
 }
 
-void AddNewSensorData(String id, String data){
-  int sensorID=-1;
-  for (int i=0;i<set.sensor_count ;i++){
-    if(set.sensors[i]==id){
-      sensorID=i;
-    }
-  }
-  if(sensorID>-1){
-   set.store[sensorID]=data;
-  }
-}
-
-void AddNewHeaderParam(int id, String header){
-  set.sensors[set.sensor_count]=id;
-  set.store[set.sensor_count]=header;
+void AddData(String id, String data){
+  if(set.DB==false){
   set.sensor_count++;
+  set.fulldata+=id+set.seperate;
+  set.cloud+="l"+String(set.sensor_count)+id+"&";
+  }else{
+  set.sensor_count++;
+  set.fulldata+=data;
+  set.fulldata+=set.seperate;
+  set.cloud+="l"+String(set.sensor_count)+data+"&";
+  }
 }
