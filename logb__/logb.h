@@ -24,10 +24,13 @@ struct Settings{
   String ArduinoName;
   unsigned long previousMillis = 0;
   unsigned long currentMillis=0;
+  unsigned long firstMillis=0;
+  unsigned long timeIntervall=0;
   String fulldata="";
   String cloud="";
 };
 extern Settings set;
+DateTime NoTime();
 String Time(DateTime time);
 void AddData(String id, String data);
 void CreateName(DateTime time);
