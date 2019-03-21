@@ -14,17 +14,17 @@ WiFi.begin("Potyka", "62Botticelli2016");
 while (WiFi.status() != WL_CONNECTED) {delay(50);}
 set.device_id="cimbi21_1";
 set.pin="admin";
-set.where="ab";
+set.where="abc";
 set.timeIntervall=2000;
-CreateName(rtc.now());
+CreateName(UnixTime(1));
 }
 void loop() {
 set.currentMillis = millis(); 
 if (set.currentMillis - set.previousMillis >= set.timeIntervall) { 
 set.previousMillis = set.currentMillis; 
-AddData("Date",   Time(NoTime()));
-AddData("Temp",  String(SHT2x.GetHumidity()));
-AddData("Hum",   String(SHT2x.GetTemperature()));
+AddData("NTP","Date",   Time(UnixTime(1)));
+AddData("SHT21","Temp",  String(SHT2x.GetHumidity()));
+AddData("SHT21","Hum",   String(SHT2x.GetTemperature()));
 Send();
 }
 }
