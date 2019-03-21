@@ -10,8 +10,8 @@ Wire.begin();
 //lightMeter.begin();
 rtc.begin();
 //WiFi.begin("LogB Cloud", "logb2018");
-//WiFi.begin("Potyka", "62Botticelli2016");
-//while (WiFi.status() != WL_CONNECTED) {delay(50);}
+WiFi.begin("Potyka", "62Botticelli2016");
+while (WiFi.status() != WL_CONNECTED) {delay(50);}
 set.device_id="cimbi21_1";
 set.pin="admin";
 set.where="ab";
