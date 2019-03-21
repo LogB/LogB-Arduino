@@ -12,7 +12,7 @@
 
 struct Settings{
   String seperate=";";
-  bool toComma=true; 
+  bool toComma=false; 
   String where="";
   String pin="";
   String measurement_arduinoname="";
