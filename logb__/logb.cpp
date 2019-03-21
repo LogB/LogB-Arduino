@@ -86,7 +86,7 @@ void Send(){
             http.begin("http://api.logb.hu/v1/upload.php");
             http.addHeader("Content-Type", "application/x-www-form-urlencoded");
             set.cloud+="oszlop="+String(set.sensor_count)+"&ma="+set.ArduinoName+"&pin="+set.pin+"&device="+set.device_id+"&time="+Time(set.date);
-            int httpCode=http.POST(post);
+            int httpCode=http.POST(set.cloud);
             http.end();
             //Serial.println(httpCode);
            #endif
