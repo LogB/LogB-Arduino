@@ -89,7 +89,7 @@ void Send(){
         
       if(w=='c'){
            #if defined(ESP8266)
-            http.begin("http://api.logb.hu/v1/upload.php");
+            http.begin("http://api.logb.hu/v1.1/upload.php");
             http.addHeader("Content-Type", "application/x-www-form-urlencoded");
             set.cloud+="oszlop="+String(set.sensor_count)+"&ma="+set.ArduinoName+"&pin="+set.pin+"&device="+set.device_id+"&time="+Time(set.date);
             int httpCode=http.POST(set.cloud);
@@ -105,18 +105,18 @@ void Send(){
     set.fulldata="";
 }
 
-void AddData(String id, String data){
+void AddData(String id, String header, String data){
   if(set.DB==false){
   if(set.date.unixtime()==1702511185){
     set.firstMillis=set.previousMillis+set.timeIntervall;
   }
   set.sensor_count++;
-  set.fulldata+=id+set.seperate;
-  set.cloud+="l"+String(set.sensor_count)+id+"&";
+  set.fulldata+=header+set.seperate;
+  set.cloud+="logb"+String(set.sensor_count)+"="+header+"&sensor"+String(set.sensor_count)+"="+id+"&";
   }else{
   set.sensor_count++;
   set.fulldata+=data;
   set.fulldata+=set.seperate;
-  set.cloud+="l"+String(set.sensor_count)+data+"&";
+  set.cloud+="logb"+String(set.sensor_count)+"="+data+"&";
   }
 }
