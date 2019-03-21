@@ -1,13 +1,14 @@
 //logb.h
 
 #if defined(ESP8266)
-#include "ESP8266/ESP8266WiFi.h"
-#include "ESP8266/ESP8266HTTPClient.h"
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <time.h>
 #endif
 
 #include "RTClib.h"
 #include <Wire.h>
-#include "SdFat/SdFat.h"
+#include <SdFat.h>
 
 struct Settings{
   String seperate=";";
