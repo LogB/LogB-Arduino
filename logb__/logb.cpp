@@ -6,14 +6,16 @@ SdFat SD;
 HTTPClient http; 
 #endif
 
+DateTime NoTime(){
+  return 1702511185;
+}
+
 DateTime UnixTime(int tz){
   #if defined(ESP8266)
   time_t now=0;
-  String date="";
   int timezone = tz * 3600;
-  int dst = 0;
   while(now<958881900){
-  configTime(timezone, dst, "pool.ntp.org","time.nist.gov");
+  configTime(timezone, 0 , "pool.ntp.org","time.nist.gov");
   while(!time(nullptr)){
   }delay(10);
 now = time(nullptr);
@@ -35,8 +37,11 @@ String wz(int n){
   }return r;
 }
 String Time(DateTime time){
-  set.date=time;
  String date;
+ set.date=time;
+ if(time.unixtime()== 1702511185){
+  date=String(set.previousMillis-set.firstMillis);
+ }else{
   date+=time.year();  
   date+="-";
   date+=wz(time.month());
@@ -48,6 +53,7 @@ String Time(DateTime time){
   date+=wz(time.minute());
   date+=":";
   date+=wz(time.second());
+ }
 return date;
 }
 
@@ -101,6 +107,9 @@ void Send(){
 
 void AddData(String id, String data){
   if(set.DB==false){
+  if(set.date.unixtime()==1702511185){
+    set.firstMillis=set.previousMillis+set.timeIntervall;
+  }
   set.sensor_count++;
   set.fulldata+=id+set.seperate;
   set.cloud+="l"+String(set.sensor_count)+id+"&";
