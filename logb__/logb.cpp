@@ -37,10 +37,11 @@ String wz(int n){
   }return r;
 }
 String Time(DateTime time){
- String date;
+ String date="";
  set.date=time;
  if(time.unixtime()== 1702511185){
-  date=String(set.previousMillis-set.firstMillis);
+  unsigned long m = set.previousMillis-set.firstMillis;
+  date=String(m/1000)+"."+String((m-m/1000*1000)/100);
  }else{
   date+=time.year();  
   date+="-";
