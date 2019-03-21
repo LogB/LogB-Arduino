@@ -15,28 +15,14 @@ while (WiFi.status() != WL_CONNECTED) {delay(50);}
 set.device_id="cimbi21_1";
 set.pin="admin";
 set.where="ab";
+set.timeIntervall=2000;
 CreateName(rtc.now());
 }
 void loop() {
 set.currentMillis = millis(); 
-if (set.currentMillis - set.previousMillis >= 2000) { 
+if (set.currentMillis - set.previousMillis >= set.timeIntervall) { 
 set.previousMillis = set.currentMillis; 
-set.date=rtc.now();
-AddData("Date",   Time(rtc.now()));
-AddData("Temp",  String(SHT2x.GetHumidity()));
-AddData("Hum",   String(SHT2x.GetTemperature()));
-AddData("Temp",  String(SHT2x.GetHumidity()));
-AddData("Hum",   String(SHT2x.GetTemperature()));
-AddData("Temp",  String(SHT2x.GetHumidity()));
-AddData("Hum",   String(SHT2x.GetTemperature()));
-AddData("Temp",  String(SHT2x.GetHumidity()));
-AddData("Hum",   String(SHT2x.GetTemperature()));
-AddData("Temp",  String(SHT2x.GetHumidity()));
-AddData("Hum",   String(SHT2x.GetTemperature()));
-AddData("Temp",  String(SHT2x.GetHumidity()));
-AddData("Hum",   String(SHT2x.GetTemperature()));
-AddData("Temp",  String(SHT2x.GetHumidity()));
-AddData("Hum",   String(SHT2x.GetTemperature()));
+AddData("Date",   Time(NoTime()));
 AddData("Temp",  String(SHT2x.GetHumidity()));
 AddData("Hum",   String(SHT2x.GetTemperature()));
 Send();
