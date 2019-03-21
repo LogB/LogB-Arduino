@@ -32,7 +32,7 @@ struct Settings{
 extern Settings set;
 DateTime NoTime();
 String Time(DateTime time);
-void AddData(String id, String data);
+void AddData(String id, String header, String data);
 void CreateName(DateTime time);
 void Send();
 DateTime UnixTime(int tz);
