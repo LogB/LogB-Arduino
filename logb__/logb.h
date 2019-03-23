@@ -25,7 +25,7 @@ struct Settings{
   unsigned long previousMillis = 0;
   unsigned long currentMillis=0;
   unsigned long firstMillis=0;
-  unsigned long timeIntervall=0;
+  unsigned long timeInterval=0;
   String fulldata="";
   String cloud="";
 };
