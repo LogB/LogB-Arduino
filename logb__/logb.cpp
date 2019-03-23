@@ -109,7 +109,7 @@ void Send(){
 void AddData(String id, String header, String data){
   if(set.DB==false){
   if(set.date.unixtime()==1702511185){
-    set.firstMillis=set.previousMillis+set.timeIntervall;
+    set.firstMillis=set.previousMillis+set.timeInterval;
   }
   set.sensor_count++;
   set.fulldata+=header+set.seperate;
