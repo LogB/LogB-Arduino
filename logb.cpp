@@ -15,9 +15,9 @@ DateTime UnixTime(int tz){
   time_t now=0;
   int timezone = tz * 3600;
   while(now<958881900){
-  configTime(timezone, 0 , "pool.ntp.org","time.nist.gov");
+  configTime(timezone, 0 , "pool.ntp.org","time.nist.gov","time.windows.com");
   while(!time(nullptr)){
-  }delay(10);
+  }delay(50);
 now = time(nullptr);
   }
 return now;
