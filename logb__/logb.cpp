@@ -1,6 +1,27 @@
 //logb.cpp
+#define TINY_GSM_MODEM_SIM800 
+#include <TinyGsmClient.h>
+#include <ArduinoHttpClient.h>
+#include <SoftwareSerial.h>
 #include "logb.h"
 SdFat SD;
+
+
+#define SerialAT Serial2
+//SoftwareSerial SerialAT(2, 3);
+String contentType = "application/x-www-form-urlencoded";
+char apn[] = "internet";
+char gprsUser[] = "";
+char gprsPass[] = "";
+char server[] = "api.logb.hu";
+char api[] = "/v1.1/upload.php";
+char t[] = "/v1.1/time.php";
+int port = 80;
+
+
+TinyGsm modem(SerialAT);
+TinyGsmClient client(modem);
+HttpClient http(client, server, port);
 
 #if defined(ESP8266)
 HTTPClient http; 
@@ -22,6 +43,47 @@ now = time(nullptr);
   }
 return now;
 #endif
+}
+
+void GSMBegin(){
+  SerialAT.begin(115200);
+  modem.init();
+}
+DateTime UnixWithGSM(int tz){
+  String time="";
+  if (!modem.gprsConnect(apn))
+        {
+          return;
+        }
+        if (!modem.waitForNetwork())
+        {
+          return;
+        }
+        if (!modem.gprsConnect(apn, gprsUser, gprsPass))
+        {
+          return;
+        }
+        if (!client.connect(server, port))
+        {
+          return;
+        }
+       http.post(t, contentType,"tz="+tz);
+       unsigned long timeout = millis();
+ 
+  while (client.connected() && millis() - timeout < 10000L) //IDK why this is needed, maybe waits until the connection closes?
+  {
+    while (client.available())
+    {
+      time += client.read();
+      timeout = millis();
+    }
+  }
+ 
+  // Shutdown
+  http.stop();
+  client.stop();
+  modem.gprsDisconnect();
+  return time.toInt();
 }
 
 void CreateName(DateTime time){
@@ -65,6 +127,7 @@ void dateTime(uint16_t* date, uint16_t* time) {
 }
 
 void Send(){
+  set.cloud+="oszlop="+String(set.sensor_count)+"&ma="+set.ArduinoName+"&pin="+set.pin+"&device="+set.device_id+"&time="+Time(set.date);
   if(set.toComma){
   set.fulldata.replace('.',',');
    } 
@@ -92,12 +155,44 @@ void Send(){
            #if defined(ESP8266)
             http.begin("http://api.logb.hu/v1.1/upload.php");
             http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-            set.cloud+="oszlop="+String(set.sensor_count)+"&ma="+set.ArduinoName+"&pin="+set.pin+"&device="+set.device_id+"&time="+Time(set.date);
             int httpCode=http.POST(set.cloud);
             http.end();
             //Serial.println(httpCode);
            #endif
         }
+      if(w=='d'){
+        if (!modem.gprsConnect(apn))
+        {
+          return;
+        }
+        if (!modem.waitForNetwork())
+        {
+          return;
+        }
+        if (!modem.gprsConnect(apn, gprsUser, gprsPass))
+        {
+          return;
+        }
+        if (!client.connect(server, port))
+        {
+          return;
+        }
+       http.post(api, contentType, set.cloud);
+       unsigned long timeout = millis();
+ 
+  while (client.connected() && millis() - timeout < 10000L) //IDK why this is needed, maybe waits until the connection closes?
+  {
+    while (client.available())
+    {
+      timeout = millis();
+    }
+  }
+ 
+  // Shutdown
+  http.stop();
+  client.stop();
+  modem.gprsDisconnect();
+      }
  
     }
     set.DB=true;
