@@ -1,5 +1,5 @@
 #include "logb.h"
-#include "BH1750.h"
+//#include "BH1750.h"
 #include "Sodaq_SHT2x.h"
 #include "Adafruit_BMP085.h"
 Settings set;
