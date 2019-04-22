@@ -1,11 +1,11 @@
 //logb.h
 
+
 #if defined(ESP8266)
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
-#include <time.h>
 #endif
-
+#include <time.h>
 #include "RTClib.h"
 #include <Wire.h>
 #include <SdFat.h>
@@ -29,6 +29,8 @@ struct Settings{
   String fulldata="";
   String cloud="";
 };
+void GSMBegin();
+DateTime UnixWithGSM(int tz);
 extern Settings set;
 DateTime NoTime();
 String Time(DateTime time);
